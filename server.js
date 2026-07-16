@@ -1,9 +1,10 @@
 
 
 const express = require('express');
+
 const app = express()
 const port = 3000;
-
+app.use(express.json())
 const tasks = [{
     id: 1,
     title: "Make the bed",
@@ -53,8 +54,33 @@ app.get('/tasks/:id', (req, res) => {
     return res.status(200).json({
         task: task
     })
-
 })
+
+app.post('/tasks', (req, res) => {
+
+    const title = req.body.title;
+
+    if (!title) {
+        return res.status(400).json({
+            error: "Cannot create a task with a missing title"
+        });
+    }
+
+    const freeId = tasks.length > 0 ? tasks[tasks.length - 1].id + 1 : 1;
+
+    console.log(`Assigning ID: ${freeId}`);
+
+    const newTask = {
+        id: freeId,
+        title,
+        done: false
+    };
+
+    tasks.push(newTask);
+    res.status(201).json({
+        task: newTask
+    });
+});
 app.listen(port, () => {
     console.log(`Listening on port ${port}`)
 })
