@@ -5,7 +5,7 @@ const express = require('express');
 const app = express()
 const port = 3000;
 app.use(express.json())
-const tasks = [{
+let tasks = [{
     id: 1,
     title: "Make the bed",
     done: true
@@ -81,6 +81,53 @@ app.post('/tasks', (req, res) => {
         task: newTask
     });
 });
+
+app.put('/tasks/:id', (req, res) => {
+    const { id } = req.params;
+    if (!id)
+        return res.status(400).json({
+            error: 'An id must provided'
+        })
+    const task = tasks.find((item) => {
+        return item.id == Number(id)
+    })
+    if (!task)
+        return res.status(404).json({
+            error: "Task was not found"
+        })
+    const { title, done } = req.body;
+    if (!title && done === undefined)
+        return res.status(400).json({
+            error: 'You must add a title or done status to edit'
+        })
+    if (done !== undefined)
+        task.done = done
+    if (title)
+        task.title = title
+
+    return res.status(200).json({
+        task
+    })
+
+})
+app.delete("/tasks/:id", (req, res) => {
+    const { id } = req.params;
+    if (!id)
+        return res.status(400).json({
+            error: 'An id must provided'
+        })
+    const task = tasks.find((item) => {
+        return item.id == Number(id)
+    })
+    if (!task)
+        return res.status(404).json({
+            error: "Task was not found"
+        })
+    
+    tasks = tasks.filter((item) => item.id != Number(id))
+
+    return res.status(204).json({})
+})
 app.listen(port, () => {
     console.log(`Listening on port ${port}`)
 })
