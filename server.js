@@ -4,10 +4,19 @@ const express = require('express');
 const app = express()
 const port = 3000;
 
-app.get('/', (req, res)=>{
-    res.send('Hello Server');
+app.get('/', (req, res) => {
+    res.json({
+        "name": "Task API",
+        "version": "1.0",
+        "endpoints": ["/tasks"]
+    })
 })
 
-app.listen(port, ()=>{
+app.get('/health', (req,res)=>{
+    res.status(200).json({
+        "status": "ok"
+    })
+})
+app.listen(port, () => {
     console.log(`Listening on port ${port}`)
 })
